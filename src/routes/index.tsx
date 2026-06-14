@@ -113,12 +113,13 @@ function Index() {
 }
 
 function Nav() {
+  const [open, setOpen] = useState(false);
   return (
     <header className="sticky top-0 z-40 backdrop-blur-xl bg-background/70 border-b border-border/60">
-      <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
-        <a href="#" className="flex items-center gap-2 font-display text-2xl">
-          <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-gradient-hero text-primary-foreground">
-            <Sparkles className="h-4 w-4" />
+      <div className="mx-auto max-w-7xl px-4 md:px-6 h-16 flex items-center justify-between">
+        <a href="#" className="flex items-center gap-2 font-display text-xl md:text-2xl">
+          <span className="inline-flex h-8 w-8 md:h-9 md:w-9 items-center justify-center rounded-full bg-gradient-hero text-primary-foreground">
+            <Sparkles className="h-3.5 w-3.5 md:h-4 md:w-4" />
           </span>
           SparklePro
         </a>
@@ -128,10 +129,28 @@ function Nav() {
           <a href="#estimator" className="hover:text-primary">AI Estimator</a>
           <a href="#reviews" className="hover:text-primary">Reviews</a>
         </nav>
-        <Button asChild className="rounded-full bg-foreground text-background hover:bg-foreground/90">
-          <a href="#book">Book now <ArrowRight className="ml-1 h-4 w-4" /></a>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button asChild className="hidden md:inline-flex rounded-full bg-foreground text-background hover:bg-foreground/90">
+            <a href="#book">Book now <ArrowRight className="ml-1 h-4 w-4" /></a>
+          </Button>
+          <button onClick={() => setOpen(!open)} className="md:hidden p-2 text-foreground">
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={open ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
+            </svg>
+          </button>
+        </div>
       </div>
+      {open && (
+        <div className="md:hidden border-t border-border/60 bg-background px-4 py-4 space-y-3">
+          <a href="#services" onClick={() => setOpen(false)} className="block text-sm font-medium hover:text-primary">Services</a>
+          <a href="#packages" onClick={() => setOpen(false)} className="block text-sm font-medium hover:text-primary">Packages</a>
+          <a href="#estimator" onClick={() => setOpen(false)} className="block text-sm font-medium hover:text-primary">AI Estimator</a>
+          <a href="#reviews" onClick={() => setOpen(false)} className="block text-sm font-medium hover:text-primary">Reviews</a>
+          <Button asChild className="w-full rounded-full bg-foreground text-background hover:bg-foreground/90 mt-2">
+            <a href="#book">Book now <ArrowRight className="ml-1 h-4 w-4" /></a>
+          </Button>
+        </div>
+      )}
     </header>
   );
 }
@@ -139,31 +158,31 @@ function Nav() {
 function Hero() {
   return (
     <section className="relative overflow-hidden">
-      <div className="mx-auto max-w-7xl px-6 pt-16 pb-24 grid lg:grid-cols-12 gap-10 items-center">
-        <div className="lg:col-span-6 space-y-7 relative z-10">
-          <Badge className="rounded-full bg-secondary text-secondary-foreground border-0 px-3 py-1">
+      <div className="mx-auto max-w-7xl px-4 md:px-6 pt-10 md:pt-16 pb-16 md:pb-24 grid lg:grid-cols-12 gap-6 md:gap-10 items-center">
+        <div className="lg:col-span-6 space-y-5 md:space-y-7 relative z-10">
+          <Badge className="rounded-full bg-secondary text-secondary-foreground border-0 px-3 py-1 text-xs md:text-sm">
             <Sparkles className="h-3 w-3 mr-1" /> AI-powered instant quotes
           </Badge>
-          <h1 className="font-display text-6xl md:text-7xl lg:text-8xl leading-[0.95] text-balance">
+          <h1 className="font-display text-4xl sm:text-5xl md:text-7xl lg:text-8xl leading-[0.95] text-balance">
             Spotless homes,<br />
             <em className="text-primary not-italic">effortlessly</em> booked.
           </h1>
-          <p className="text-lg text-muted-foreground max-w-lg text-balance">
+          <p className="text-base md:text-lg text-muted-foreground max-w-lg text-balance">
             SparklePro pairs eco-friendly cleaners with a smart estimator that prices your job
             in 12 seconds. No phone calls. No surprise fees.
           </p>
           <div className="flex flex-wrap gap-3">
-            <Button asChild size="lg" className="rounded-full h-12 px-6 bg-foreground text-background hover:bg-foreground/90">
+            <Button asChild size="lg" className="rounded-full h-11 md:h-12 px-5 md:px-6 text-sm md:text-base bg-foreground text-background hover:bg-foreground/90">
               <a href="#estimator"><Wand2 className="mr-2 h-4 w-4" /> Get instant quote</a>
             </Button>
-            <Button asChild size="lg" variant="outline" className="rounded-full h-12 px-6 border-foreground/20">
+            <Button asChild size="lg" variant="outline" className="rounded-full h-11 md:h-12 px-5 md:px-6 text-sm md:text-base border-foreground/20">
               <a href="#packages">See packages</a>
             </Button>
           </div>
-          <div className="flex items-center gap-6 pt-4">
+          <div className="flex items-center gap-6 pt-2 md:pt-4">
             <div className="flex -space-x-2">
               {[1,2,3,4].map(i => (
-                <div key={i} className="h-9 w-9 rounded-full border-2 border-background"
+                <div key={i} className="h-8 w-8 md:h-9 md:w-9 rounded-full border-2 border-background"
                   style={{ background: `oklch(${0.7 + i*0.04} 0.13 ${160 + i*15})` }} />
               ))}
             </div>
@@ -178,8 +197,8 @@ function Hero() {
         </div>
 
         <div className="lg:col-span-6 relative">
-          <div className="absolute -inset-6 bg-gradient-hero rounded-[3rem] blur-3xl opacity-30" />
-          <div className="relative rounded-[2.5rem] overflow-hidden shadow-soft border border-border/50">
+          <div className="absolute -inset-4 md:-inset-6 bg-gradient-hero rounded-[3rem] blur-3xl opacity-30" />
+          <div className="relative rounded-[2rem] md:rounded-[2.5rem] overflow-hidden shadow-soft border border-border/50">
             <img
               src={heroImg}
               alt="Sparkling clean bright living room with sunlight and bubbles"
@@ -188,7 +207,7 @@ function Hero() {
               className="w-full h-auto object-cover"
             />
           </div>
-          <div className="absolute -bottom-6 -left-6 bg-card rounded-2xl shadow-card p-4 flex items-center gap-3 border border-border/50">
+          <div className="hidden md:flex absolute -bottom-6 -left-6 bg-card rounded-2xl shadow-card p-4 items-center gap-3 border border-border/50">
             <div className="h-10 w-10 rounded-full bg-mint flex items-center justify-center">
               <ShieldCheck className="h-5 w-5 text-primary" />
             </div>
@@ -197,8 +216,8 @@ function Hero() {
               <div className="text-muted-foreground text-xs">Re-clean free within 24h</div>
             </div>
           </div>
-          <div className="absolute -top-4 -right-4 bg-accent rounded-2xl px-4 py-3 shadow-card rotate-3">
-            <div className="font-display text-2xl text-accent-foreground">$129</div>
+          <div className="absolute -top-3 -right-3 md:-top-4 md:-right-4 bg-accent rounded-2xl px-3 py-2 md:px-4 md:py-3 shadow-card rotate-3">
+            <div className="font-display text-lg md:text-2xl text-accent-foreground">$129</div>
             <div className="text-xs text-accent-foreground/80">from / visit</div>
           </div>
         </div>
@@ -225,18 +244,18 @@ function Marquee() {
 
 function Services() {
   return (
-    <section id="services" className="py-24 px-6">
+    <section id="services" className="py-12 md:py-16 px-4 md:px-6">
       <div className="mx-auto max-w-7xl">
-        <div className="flex items-end justify-between mb-12 flex-wrap gap-4">
+        <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-8 md:mb-12 gap-4">
           <div>
-            <div className="text-sm uppercase tracking-widest text-primary font-semibold mb-3">Services</div>
-            <h2 className="font-display text-5xl md:text-6xl text-balance max-w-2xl">
+            <div className="text-xs md:text-sm uppercase tracking-widest text-primary font-semibold mb-2 md:mb-3">Services</div>
+            <h2 className="font-display text-3xl sm:text-4xl md:text-6xl text-balance max-w-2xl">
               Pick a clean. We handle the rest.
             </h2>
           </div>
-          <p className="max-w-sm text-muted-foreground">From a quick refresh to a full reset, every visit ends with a 50-point inspection.</p>
+          <p className="max-w-sm text-sm md:text-base text-muted-foreground">From a quick refresh to a full reset, every visit ends with a 50-point inspection.</p>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
           {SERVICES.map((s, i) => (
             <div key={s.id} className="group relative rounded-3xl bg-card border border-border/60 p-7 hover:shadow-card transition-all hover:-translate-y-1">
               <div className="h-12 w-12 rounded-2xl bg-gradient-hero flex items-center justify-center text-primary-foreground mb-6">
@@ -259,20 +278,20 @@ function Services() {
 
 function Packages() {
   return (
-    <section id="packages" className="py-24 px-6 bg-gradient-soft">
+    <section id="packages" className="py-12 md:py-16 px-4 md:px-6 bg-gradient-soft">
       <div className="mx-auto max-w-7xl">
-        <div className="text-center mb-14">
-          <div className="text-sm uppercase tracking-widest text-primary font-semibold mb-3">Packages</div>
-          <h2 className="font-display text-5xl md:text-6xl text-balance max-w-3xl mx-auto">
+        <div className="text-center mb-8 md:mb-14">
+          <div className="text-xs md:text-sm uppercase tracking-widest text-primary font-semibold mb-2 md:mb-3">Packages</div>
+          <h2 className="font-display text-3xl sm:text-4xl md:text-6xl text-balance max-w-3xl mx-auto">
             Transparent pricing. <em className="text-primary">Zero</em> surprises.
           </h2>
         </div>
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-3 gap-4 md:gap-6">
           {PACKAGES.map(p => (
             <div key={p.name}
-              className={`relative rounded-3xl p-8 border transition-all ${
+              className={`relative rounded-3xl p-6 md:p-8 border transition-all ${
                 p.highlight
-                  ? "bg-deep text-background border-deep shadow-soft scale-[1.03]"
+                  ? "bg-deep text-background border-deep shadow-soft md:scale-[1.03]"
                   : "bg-card border-border/60 hover:shadow-card"
               }`}>
               {p.highlight && (
@@ -359,27 +378,24 @@ function EstimatorSection() {
         },
       });
       setResult(r as EstimateResult);
-    } catch (e: any) {
-      const msg = String(e?.message || e);
-      if (msg.includes("429")) toast.error("AI is busy — try again in a few seconds.");
-      else if (msg.includes("402")) toast.error("AI credits exhausted. Add credits in workspace billing.");
-      else toast.error("Couldn't generate estimate. Try again.");
+    } catch {
+      toast.error("Couldn't generate estimate. Try again.");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <section id="estimator" className="py-24 px-6">
-      <div className="mx-auto max-w-7xl grid lg:grid-cols-2 gap-10 items-start">
-        <div className="lg:sticky lg:top-24 space-y-6">
-          <Badge className="rounded-full bg-accent text-accent-foreground border-0 px-3 py-1">
+    <section id="estimator" className="py-12 md:py-16 px-4 md:px-6">
+      <div className="mx-auto max-w-7xl grid lg:grid-cols-2 gap-6 md:gap-10 items-start">
+        <div className="lg:sticky lg:top-24 space-y-4 md:space-y-6">
+          <Badge className="rounded-full bg-accent text-accent-foreground border-0 px-3 py-1 text-xs md:text-sm">
             <Wand2 className="h-3 w-3 mr-1" /> AI Cost Estimator
           </Badge>
-          <h2 className="font-display text-5xl md:text-6xl leading-[1] text-balance">
+          <h2 className="font-display text-3xl sm:text-4xl md:text-6xl leading-[1] text-balance">
             A real quote, <em className="text-primary">written by AI,</em> in seconds.
           </h2>
-          <p className="text-muted-foreground text-lg max-w-md">
+          <p className="text-muted-foreground text-base md:text-lg max-w-md">
             Our model studies thousands of past jobs in your area and gives you a fair price range,
             estimated hours, and a personalized recommendation.
           </p>
@@ -394,45 +410,45 @@ function EstimatorSection() {
           </div>
         </div>
 
-        <div className="rounded-3xl bg-card border border-border/60 p-6 md:p-8 shadow-card space-y-6">
-          <div className="space-y-3">
-            <Label>Home type</Label>
+        <div className="rounded-2xl md:rounded-3xl bg-card border border-border/60 p-5 md:p-8 shadow-card space-y-5 md:space-y-6">
+          <div className="space-y-2 md:space-y-3">
+            <Label className="text-sm">Home type</Label>
             <div className="grid grid-cols-3 gap-2">
               {HOME_TYPES.map(h => {
                 const Icon = h.icon;
                 const active = homeType === h.id;
                 return (
                   <button key={h.id} onClick={() => setHomeType(h.id)}
-                    className={`rounded-2xl border p-4 flex flex-col items-center gap-2 transition-all ${
+                    className={`rounded-xl md:rounded-2xl border p-3 md:p-4 flex flex-col items-center gap-1 md:gap-2 transition-all ${
                       active ? "border-primary bg-primary/5 text-primary" : "border-border hover:border-primary/50"
                     }`}>
-                    <Icon className="h-5 w-5" />
-                    <span className="text-sm font-medium">{h.label}</span>
+                    <Icon className="h-4 w-4 md:h-5 md:w-5" />
+                    <span className="text-xs md:text-sm font-medium">{h.label}</span>
                   </button>
                 );
               })}
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-3">
-              <Label>Bedrooms: <span className="font-bold">{bedrooms}</span></Label>
+          <div className="grid grid-cols-2 gap-3 md:gap-4">
+            <div className="space-y-2 md:space-y-3">
+              <Label className="text-sm">Bedrooms: <span className="font-bold">{bedrooms}</span></Label>
               <Slider value={[bedrooms]} min={0} max={8} step={1} onValueChange={v => setBedrooms(v[0])} />
             </div>
-            <div className="space-y-3">
-              <Label>Bathrooms: <span className="font-bold">{bathrooms}</span></Label>
+            <div className="space-y-2 md:space-y-3">
+              <Label className="text-sm">Bathrooms: <span className="font-bold">{bathrooms}</span></Label>
               <Slider value={[bathrooms]} min={0} max={6} step={1} onValueChange={v => setBathrooms(v[0])} />
             </div>
           </div>
 
-          <div className="space-y-3">
-            <Label>Square footage: <span className="font-bold">{sqft.toLocaleString()}</span></Label>
+          <div className="space-y-2 md:space-y-3">
+            <Label className="text-sm">Square footage: <span className="font-bold">{sqft.toLocaleString()}</span></Label>
             <Slider value={[sqft]} min={400} max={6000} step={100} onValueChange={v => setSqft(v[0])} />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Service</Label>
+              <Label className="text-sm">Service</Label>
               <Select value={serviceType} onValueChange={setServiceType}>
                 <SelectTrigger className="rounded-xl"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -441,7 +457,7 @@ function EstimatorSection() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Frequency</Label>
+              <Label className="text-sm">Frequency</Label>
               <Select value={frequency} onValueChange={setFrequency}>
                 <SelectTrigger className="rounded-xl"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -451,8 +467,8 @@ function EstimatorSection() {
             </div>
           </div>
 
-          <div className="space-y-3">
-            <Label>Add-ons</Label>
+          <div className="space-y-2 md:space-y-3">
+            <Label className="text-sm">Add-ons</Label>
             <div className="grid grid-cols-2 gap-2">
               {EXTRAS.map(e => {
                 const active = extras.includes(e.id);
@@ -475,7 +491,7 @@ function EstimatorSection() {
           </div>
 
           <div className="space-y-2">
-            <Label>Anything we should know? (optional)</Label>
+            <Label className="text-sm">Anything we should know? (optional)</Label>
             <Textarea rows={2} value={notes} onChange={e => setNotes(e.target.value)}
               placeholder="e.g. two cats, hardwood floors, paint job last week" className="rounded-xl resize-none" />
           </div>
@@ -483,15 +499,15 @@ function EstimatorSection() {
           <Button onClick={onEstimate} disabled={loading}
             className="w-full h-14 rounded-2xl text-base bg-gradient-hero text-primary-foreground hover:opacity-90 shadow-soft">
             {loading
-              ? <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Calculating with AI…</>
-              : <><Wand2 className="mr-2 h-5 w-5" /> Get my AI estimate</>}
+              ? <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Calculating estimate…</>
+              : <><Wand2 className="mr-2 h-5 w-5" /> Get my estimate</>}
           </Button>
 
           {result && (
             <div className="rounded-2xl bg-gradient-soft border border-border/60 p-6 space-y-4 animate-in fade-in slide-in-from-bottom-2">
               <div className="flex items-end justify-between">
                 <div>
-                  <div className="text-xs uppercase tracking-widest text-primary font-semibold">AI estimate</div>
+                  <div className="text-xs uppercase tracking-widest text-primary font-semibold">Estimate</div>
                   <div className="font-display text-5xl">${result.lowPrice}–${result.highPrice}</div>
                 </div>
                 <div className="text-right text-sm text-muted-foreground">
@@ -534,21 +550,21 @@ function BookingSection() {
   }
 
   return (
-    <section id="book" className="py-24 px-6 bg-deep text-background relative overflow-hidden">
-      <div className="absolute -top-32 -right-32 h-96 w-96 rounded-full bg-primary/30 blur-3xl" />
-      <div className="absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-accent/20 blur-3xl" />
-      <div className="mx-auto max-w-7xl relative grid lg:grid-cols-5 gap-10 items-start">
-        <div className="lg:col-span-2 space-y-6">
-          <Badge className="rounded-full bg-background/10 text-background border-0">
+    <section id="book" className="py-12 md:py-16 px-4 md:px-6 bg-deep text-background relative overflow-hidden">
+      <div className="hidden md:block absolute -top-32 -right-32 h-96 w-96 rounded-full bg-primary/30 blur-3xl" />
+      <div className="hidden md:block absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-accent/20 blur-3xl" />
+      <div className="mx-auto max-w-7xl relative grid lg:grid-cols-5 gap-6 md:gap-10 items-start">
+        <div className="lg:col-span-2 space-y-4 md:space-y-6">
+          <Badge className="rounded-full bg-background/10 text-background border-0 text-xs md:text-sm">
             <Calendar className="h-3 w-3 mr-1" /> Online Booking
           </Badge>
-          <h2 className="font-display text-5xl md:text-6xl leading-[1] text-balance">
+          <h2 className="font-display text-3xl sm:text-4xl md:text-6xl leading-[1] text-balance">
             Pick a day. <em className="text-accent">We'll bring</em> the sparkle.
           </h2>
-          <p className="text-background/70 max-w-md">
+          <p className="text-background/70 max-w-md text-sm md:text-base">
             Real human confirmation in under 15 minutes. Reschedule any time, no fees.
           </p>
-          <div className="grid grid-cols-2 gap-3 max-w-sm pt-4">
+          <div className="grid grid-cols-2 gap-3 max-w-sm pt-2 md:pt-4">
             <Stat n="4.2k+" l="Happy homes" />
             <Stat n="15 min" l="Confirmation" />
             <Stat n="50pt" l="Inspection" />
@@ -556,19 +572,19 @@ function BookingSection() {
           </div>
         </div>
 
-        <form onSubmit={submit} className="lg:col-span-3 bg-background text-foreground rounded-3xl p-6 md:p-8 shadow-soft space-y-5">
+        <form onSubmit={submit} className="lg:col-span-3 bg-background text-foreground rounded-2xl md:rounded-3xl p-5 md:p-8 shadow-soft space-y-4 md:space-y-5">
           <Tabs value={pkg} onValueChange={setPkg}>
             <TabsList className="grid grid-cols-3 w-full rounded-xl">
-              {PACKAGES.map(p => <TabsTrigger key={p.name} value={p.name} className="rounded-lg">{p.name}</TabsTrigger>)}
+              {PACKAGES.map(p => <TabsTrigger key={p.name} value={p.name} className="rounded-lg text-xs md:text-sm">{p.name}</TabsTrigger>)}
             </TabsList>
             {PACKAGES.map(p => (
-              <TabsContent key={p.name} value={p.name} className="text-sm text-muted-foreground pt-3">
-                Starting at <span className="font-display text-foreground text-xl">${p.price}</span> · {p.features[0]}
+              <TabsContent key={p.name} value={p.name} className="text-xs md:text-sm text-muted-foreground pt-3">
+                Starting at <span className="font-display text-foreground text-lg md:text-xl">${p.price}</span> · {p.features[0]}
               </TabsContent>
             ))}
           </Tabs>
 
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid md:grid-cols-2 gap-3 md:gap-4">
             <Field label="Full name"><Input value={name} onChange={e => setName(e.target.value)} placeholder="Alex Morgan" className="rounded-xl h-11" /></Field>
             <Field label="Email"><Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="alex@email.com" className="rounded-xl h-11" /></Field>
             <Field label="Phone"><Input value={phone} onChange={e => setPhone(e.target.value)} placeholder="(555) 010-2010" className="rounded-xl h-11" /></Field>
@@ -618,24 +634,24 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 function Reviews() {
   return (
-    <section id="reviews" className="py-24 px-6">
+    <section id="reviews" className="py-12 md:py-16 px-4 md:px-6">
       <div className="mx-auto max-w-7xl">
-        <div className="grid lg:grid-cols-3 gap-10 mb-14">
+        <div className="grid lg:grid-cols-3 gap-6 md:gap-10 mb-8 md:mb-14">
           <div className="lg:col-span-2">
-            <div className="text-sm uppercase tracking-widest text-primary font-semibold mb-3">Reviews</div>
-            <h2 className="font-display text-5xl md:text-6xl text-balance">
+            <div className="text-xs md:text-sm uppercase tracking-widest text-primary font-semibold mb-2 md:mb-3">Reviews</div>
+            <h2 className="font-display text-3xl sm:text-4xl md:text-6xl text-balance">
               4,200 homes. <em className="text-primary">One</em> very high standard.
             </h2>
           </div>
-          <div className="rounded-3xl bg-mint/40 p-6 border border-border/40">
-            <div className="flex items-center gap-1 text-accent-foreground mb-3">
-              {[...Array(5)].map((_, i) => <Star key={i} className="h-6 w-6 fill-current text-[color:var(--sun)]" />)}
+          <div className="rounded-2xl md:rounded-3xl bg-mint/40 p-5 md:p-6 border border-border/40">
+            <div className="flex items-center gap-1 text-accent-foreground mb-2 md:mb-3">
+              {[...Array(5)].map((_, i) => <Star key={i} className="h-5 w-5 md:h-6 md:w-6 fill-current text-[color:var(--sun)]" />)}
             </div>
-            <div className="font-display text-5xl">4.9 / 5</div>
-            <div className="text-sm text-muted-foreground">Average across Google, Yelp, and Thumbtack</div>
+            <div className="font-display text-3xl md:text-5xl">4.9 / 5</div>
+            <div className="text-xs md:text-sm text-muted-foreground">Average across Google, Yelp, and Thumbtack</div>
           </div>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
           {REVIEWS.map(r => (
             <div key={r.name} className="rounded-3xl bg-card border border-border/60 p-6 hover:shadow-card transition">
               <div className="flex items-center gap-1 mb-3">
@@ -648,22 +664,22 @@ function Reviews() {
           ))}
         </div>
 
-        <div className="mt-16 grid lg:grid-cols-2 gap-6 items-stretch">
-          <div className="rounded-3xl overflow-hidden">
+        <div className="mt-10 md:mt-16 grid lg:grid-cols-2 gap-4 md:gap-6 items-stretch">
+          <div className="rounded-2xl md:rounded-3xl overflow-hidden max-h-[400px]">
             <img src={teamImg} alt="The SparklePro team" loading="lazy" width={1200} height={1200} className="w-full h-full object-cover" />
           </div>
-          <div className="rounded-3xl bg-gradient-soft p-10 border border-border/60 flex flex-col justify-center gap-5">
-            <Leaf className="h-8 w-8 text-primary" />
-            <h3 className="font-display text-4xl">Trained humans. Eco supplies. Real accountability.</h3>
-            <p className="text-muted-foreground">
+          <div className="rounded-2xl md:rounded-3xl bg-gradient-soft p-6 md:p-10 border border-border/60 flex flex-col justify-center gap-4 md:gap-5">
+            <Leaf className="h-6 w-6 md:h-8 md:w-8 text-primary" />
+            <h3 className="font-display text-2xl md:text-4xl">Trained humans. Eco supplies. Real accountability.</h3>
+            <p className="text-sm md:text-base text-muted-foreground">
               Every SparklePro cleaner is W-2, background-checked, and trained for 40 hours before
               their first solo visit. We use only plant-based, child-and-pet-safe products.
             </p>
-            <div className="flex gap-2 pt-2">
-              <Button asChild className="rounded-full bg-foreground text-background hover:bg-foreground/90">
+            <div className="flex flex-wrap gap-2 pt-2">
+              <Button asChild className="rounded-full bg-foreground text-background hover:bg-foreground/90 text-sm md:text-base">
                 <a href="#book">Book your first clean</a>
               </Button>
-              <Button asChild variant="outline" className="rounded-full">
+              <Button asChild variant="outline" className="rounded-full text-sm md:text-base">
                 <a href="tel:+18005550100"><Phone className="h-4 w-4 mr-2" /> (800) 555-0100</a>
               </Button>
             </div>
@@ -676,9 +692,9 @@ function Reviews() {
 
 function Footer() {
   return (
-    <footer className="border-t border-border/60 py-10 px-6">
-      <div className="mx-auto max-w-7xl flex flex-wrap items-center justify-between gap-4 text-sm text-muted-foreground">
-        <div className="flex items-center gap-2 font-display text-lg text-foreground">
+    <footer className="border-t border-border/60 py-6 md:py-10 px-4 md:px-6">
+      <div className="mx-auto max-w-7xl flex flex-col md:flex-row items-center justify-between gap-3 text-xs md:text-sm text-muted-foreground">
+        <div className="flex items-center gap-2 font-display text-base md:text-lg text-foreground">
           <Sparkles className="h-4 w-4 text-primary" /> SparklePro Cleaning
         </div>
         <div>© {new Date().getFullYear()} SparklePro. Insured · Bonded · 100% Sparkle Guarantee.</div>
