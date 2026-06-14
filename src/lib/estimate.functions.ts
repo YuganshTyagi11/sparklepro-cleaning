@@ -1,7 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { generateText, Output } from "ai";
 import { z } from "zod";
-import { createLovableAiGatewayProvider } from "./ai-gateway.server";
 
 const Input = z.object({
   homeType: z.string().min(1),
@@ -14,52 +12,79 @@ const Input = z.object({
   notes: z.string().max(600).default(""),
 });
 
+const SERVICE_MULTIPLIERS: Record<string, number> = {
+  standard: 1,
+  deep: 1.6,
+  move: 1.9,
+  post: 2.3,
+};
+
+const FREQ_DISCOUNTS: Record<string, number> = {
+  once: 0,
+  weekly: 0.2,
+  biweekly: 0.15,
+  monthly: 0.1,
+};
+
+const EXTRA_PRICES: Record<string, number> = {
+  fridge: 35,
+  oven: 30,
+  windows: 40,
+  laundry: 25,
+  garage: 60,
+};
+
 export const estimateCleaningCost = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => Input.parse(d))
+  .validator((d: unknown) => Input.parse(d))
   .handler(async ({ data }) => {
-    const key = process.env.LOVABLE_API_KEY;
-    if (!key) throw new Error("Missing LOVABLE_API_KEY");
+    const mult = SERVICE_MULTIPLIERS[data.serviceType] ?? 1;
+    const discount = FREQ_DISCOUNTS[data.frequency] ?? 0;
 
-    const gateway = createLovableAiGatewayProvider(key);
+    const baseLow = Math.max(120, data.sqft * 0.08);
+    const baseHigh = Math.max(120, data.sqft * 0.12);
+    const roomsLow = data.bedrooms * 12 + data.bathrooms * 20;
+    const roomsHigh = data.bedrooms * 15 + data.bathrooms * 25;
 
-    const prompt = `You are a pricing analyst for SparklePro, a premium residential cleaning service in a mid-size US city.
-Estimate a fair price range (USD) for the following job and explain how you priced it.
+    const extrasCost = data.extras.reduce((sum, id) => sum + (EXTRA_PRICES[id] ?? 0), 0);
 
-Job:
-- Home type: ${data.homeType}
-- Bedrooms: ${data.bedrooms}
-- Bathrooms: ${data.bathrooms}
-- Square footage: ${data.sqft}
-- Service: ${data.serviceType}
-- Frequency: ${data.frequency}
-- Add-ons: ${data.extras.join(", ") || "none"}
-- Notes from customer: ${data.notes || "none"}
+    const lowPrice = Math.round((baseLow * mult + roomsLow + extrasCost) * (1 - discount));
+    const highPrice = Math.round((baseHigh * mult + roomsHigh + extrasCost) * (1 - discount));
 
-Baseline pricing rules to anchor your estimate:
-- Standard clean: $0.08-$0.12 per sqft, minimum $120
-- Deep clean: 1.6x standard
-- Move-in/move-out: 1.9x standard
-- Post-construction: 2.3x standard
-- Each bedroom adds $15, each bathroom adds $25
-- Add-ons: inside fridge $35, inside oven $30, windows $5/window estimate $40, laundry $25, garage $60
-- Frequency discounts off recurring visits: weekly -20%, biweekly -15%, monthly -10%
+    const estimatedHours = Math.round((data.sqft / 500 + data.bedrooms * 0.5 + data.bathrooms * 0.75) * mult);
 
-Be concise and confident.`;
+    const serviceLabel = data.serviceType.charAt(0).toUpperCase() + data.serviceType.slice(1);
+    const freqLabel = data.frequency;
 
-    const { output } = await generateText({
-      model: gateway("google/gemini-3-flash-preview"),
-      output: Output.object({
-        schema: z.object({
-          lowPrice: z.number(),
-          highPrice: z.number(),
-          estimatedHours: z.number(),
-          summary: z.string(),
-          breakdown: z.array(z.string()).max(8),
-          recommendation: z.string(),
-        }),
-      }),
-      prompt,
-    });
+    const breakdown = [
+      `Base rate (${data.sqft} sqft × ${data.serviceType} service)`,
+      `${data.bedrooms} bedroom${data.bedrooms !== 1 ? "s" : ""} + ${data.bathrooms} bathroom${data.bathrooms !== 1 ? "s" : ""}`,
+    ];
 
-    return output;
+    if (data.extras.length > 0) {
+      breakdown.push(`Add-ons: ${data.extras.join(", ")} (+$${extrasCost})`);
+    }
+
+    if (discount > 0) {
+      breakdown.push(`${freqLabel} discount (-${Math.round(discount * 100)}%)`);
+    }
+
+    let summary = `${serviceLabel} clean for a ${data.homeType.toLowerCase()} with ${data.bedrooms} bedroom${data.bedrooms !== 1 ? "s" : ""} and ${data.bathrooms} bathroom${data.bathrooms !== 1 ? "s" : ""}. `;
+    summary += `Estimated ${estimatedHours} hour${estimatedHours !== 1 ? "s" : ""} of cleaning time.`;
+
+    let recommendation = `For a ${data.homeType.toLowerCase()} of this size, the ${data.serviceType}-clean package offers the best value. `;
+    if (data.frequency !== "once") {
+      const saved = Math.round((1 - Math.pow(1 - discount, 12)) * 100);
+      recommendation += `With ${freqLabel} visits you save ~${saved}% annually.`;
+    } else {
+      recommendation += "Book a recurring visit to save up to 20% per clean.";
+    }
+
+    return {
+      lowPrice,
+      highPrice,
+      estimatedHours,
+      summary,
+      breakdown,
+      recommendation,
+    };
   });
